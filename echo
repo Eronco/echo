@@ -1,0 +1,32 @@
+#!/bin/bash
+
+if [ ! -f ".env" ]; then
+  if [ -f ".env.example" ]; then
+    cp ".env.example" ".env"
+  fi
+fi
+source .env
+
+help(){
+  echo "Usage: $0 [option] ddddddddddddd"
+    echo "RUN:"
+    echo "    func                  run function by name"
+    echo "    start                 start demon by name"
+    echo "    install               install packages"
+    echo "    add                   add package to npm"
+}
+
+case "$1" in
+  func) docker run -w /srv -v $(pwd):/srv -u $(id -u ${USER}):$(id -g ${USER}) --rm -it $ECHO_IMAGE npm run func $2 ;;
+  start) docker run -w /srv -v $(pwd):/srv -u $(id -u ${USER}):$(id -g ${USER}) --rm -it $ECHO_IMAGE npm run func $2 ;;
+  install) docker run -w /srv -v $(pwd):/srv -u $(id -u ${USER}):$(id -g ${USER}) --rm -it $ECHO_IMAGE npm install ;;
+  add) docker run -w /srv -v $(pwd):/srv -u $(id -u ${USER}):$(id -g ${USER}) --rm -it $ECHO_IMAGE npm install --save $2 ;;
+  help) help ;; 
+  --help) help ;; 
+  *)
+    echo "Invalid option: $1"
+    echo "Try '$0 --help' for more information."
+    help 
+    exit 1
+    ;;
+esac
